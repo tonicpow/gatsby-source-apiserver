@@ -9,7 +9,7 @@ const forEachAsync = require('./helpers').forEachAsync
 // const typePrefix = `thirdParty__`
 
 exports.sourceNodes = async ({
-  boundActionCreators,
+  actions,
   createNodeId,
   reporter
 }, {
@@ -33,7 +33,7 @@ exports.sourceNodes = async ({
 }) => {
   //store the attributes in an object to avoid naming conflicts
   const attributes = {typePrefix, url, method, headers, data, localSave, skipCreateNode, path, auth, params, payloadKey, name, entityLevel, schemaType}
-  const { createNode } = boundActionCreators;
+  const { createNode } = actions;
 
   // If true, output some info as the plugin runs
   let verbose = verboseOutput
