@@ -4,11 +4,11 @@ A gatsby source plugin for pulling in third party api data.
 
 ## Features
 
-* Pulls data from configured api url
-* Uses custom name to allow for multiple instances of plugin
-* Option to download the json data to a configurable path
-* Option to only download the json data, and skip inserting it into GraphQL
-* Supports simple authentication through axios
+- Pulls data from configured api url
+- Uses custom name to allow for multiple instances of plugin
+- Option to download the json data to a configurable path
+- Option to only download the json data, and skip inserting it into GraphQL
+- Supports simple authentication through axios
 
 ## Install
 
@@ -26,12 +26,13 @@ npm install --save gatsby-source-apiserver@next
 
 ## Change logs
 
-- `2.1.2`: Upgrade `axios` to `0.19.0`
-
+- `2.1.2`:
+  - Upgrade axios to 0.19.0 to fix DoS vulnerability
+  - Fix BoundActionCreators depracation warning
 - `2.1.1`:
-   - Support multiple entities for multiple api servers, pls take a look at attribute `entitiesArray`
-   - Add request params
-   - Support Auth0
+  - Support multiple entities for multiple api servers, pls take a look at attribute `entitiesArray`
+  - Add request params
+  - Support Auth0
 - `2.0.0`: Support gatsby-v2
 
 ## How to use
@@ -41,24 +42,22 @@ npm install --save gatsby-source-apiserver@next
 
 plugins: [
   {
-    resolve: 'gatsby-source-apiserver',
+    resolve: "gatsby-source-apiserver",
     options: {
       // Type prefix of entities from server
-      typePrefix: 'internal__',
+      typePrefix: "internal__",
 
       // The url, this should be the endpoint you are attempting to pull data from
       url: `http://yourapi.com/api/v1/posts`,
 
-      method: 'post',
+      method: "post",
 
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
-  
-      // Request body
-      data: {
 
-      },
+      // Request body
+      data: {},
 
       // Name of the data to be downloaded.  Will show in graphQL or be saved to a file
       // using this name. i.e. posts.json
@@ -86,24 +85,24 @@ plugins: [
 
       // Simple authentication, optional
       auth: {
-        username: 'myusername',
-        password: 'supersecretpassword1234'
+        username: "myusername",
+        password: "supersecretpassword1234"
       },
 
       // Advanced authentication for Auth0
       // Only available from version 2.1.0
       auth0Config: {
-        method: 'POST',
-        url: 'https://MyAuth0Domain/oauth/token',
-        headers: { 'content-type': 'application/json' },
-        data: { 
-          grant_type: 'password',
-          username: 'myusername',
-          password: 'PassAWordHere',
-          audience: 'Auth0APIAudience',
-          scope: 'openid',
-          client_id: 'AUTH0_CLIENT_ID',
-          client_secret: 'AUTH0_SECRET'
+        method: "POST",
+        url: "https://MyAuth0Domain/oauth/token",
+        headers: { "content-type": "application/json" },
+        data: {
+          grant_type: "password",
+          username: "myusername",
+          password: "PassAWordHere",
+          audience: "Auth0APIAudience",
+          scope: "openid",
+          client_id: "AUTH0_CLIENT_ID",
+          client_secret: "AUTH0_SECRET"
         },
         json: true
       },
@@ -128,22 +127,23 @@ plugins: [
       // The data to be saved locally
       // Default is false
       skipCreateNode: false, // skip import to graphQL, only use if localSave is all you want
-      
+
       // Pass an array containing any number of the entity configuration properties (except verbose, auth0Config),
-      // any not specified are defaulted to the general properties that are specified 
+      // any not specified are defaulted to the general properties that are specified
       // Only available from version 2.1.0
-      entitiesArray: [{
-        url: `http://yourapi.com/api/v1/posts`,
-        method: 'post',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        name: `posts`,
-      }]
+      entitiesArray: [
+        {
+          url: `http://yourapi.com/api/v1/posts`,
+          method: "post",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          name: `posts`
+        }
+      ]
     }
   }
 ];
-
 ```
 
 ## How to query
@@ -161,9 +161,11 @@ The dummy node will have `id: 'dummy'` and you will probably want to exclude it 
 
 ```jsx
 <ul>
-{data.allPosts.edges.filter(({node}) => node.id !== 'dummy').map(({ node }, index) => (
-   <li key={index}>{node.name}</li>
-))}
+  {data.allPosts.edges
+    .filter(({ node }) => node.id !== "dummy")
+    .map(({ node }, index) => (
+      <li key={index}>{node.name}</li>
+    ))}
 </ul>
 ```
 
