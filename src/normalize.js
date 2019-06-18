@@ -23,7 +23,7 @@ const conflictFieldPrefix = `alternative_`
 const restrictedNodeFields = [`id`, `children`, `parent`, `fields`, `internal`]
 
 // Create nodes from entities
-exports.createNodesFromEntities = ({entities, entityType, schemaType, createNode, createNodeId, reporter}) => {
+exports.createNodesFromEntities = ({entities, entityType, schemaType, enableDevRefresh, refreshId, createNode, createNodeId, reporter}) => {
 
   // Standardize and clean keys
   entities = standardizeKeys(entities)
@@ -48,9 +48,19 @@ exports.createNodesFromEntities = ({entities, entityType, schemaType, createNode
     //   })
     // }
 
+    let id = entity.id === 'dummy' ? 'dummy' : createGatsbyId(createNodeId);
+    if (process.env.NODE_ENV === 'development' && enableDevRefresh) {
+      if (restrictedNodeFields.includes(refreshId)) {
+        refreshId = `${conflictFieldPrefix}${refreshId}`
+      }
+      if (entity[refreshId]) {
+        id = entity[refreshId];
+      }
+    }
+
     const node = {
       ...entity,
-      id: entity.id === 'dummy' ? 'dummy' : createGatsbyId(createNodeId),
+      id: id,
       parent: null,
       children: [],
       mediaType: 'application/json',
