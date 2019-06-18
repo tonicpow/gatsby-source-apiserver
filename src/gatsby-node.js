@@ -82,6 +82,10 @@ exports.sourceNodes = async ({
     let entityType = `${typePrefix}${name}`
     // console.log(`entityType: ${entityType}`);
 
+    // Determine whether to refresh data when running `gatsby develop`
+    const devRefresh = process.env.NODE_ENV === 'development' && enableDevRefresh
+    const enableRefreshEndpoint = process.env.ENABLE_GATSBY_REFRESH_ENDPOINT
+
     // Fetch the data
     let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter})
 
@@ -108,7 +112,8 @@ exports.sourceNodes = async ({
         entities,
         entityType,
         schemaType,
-        enableDevRefresh,
+        devRefresh,
+        enableRefreshEndpoint,
         refreshId,
         createNode,
         createNodeId,

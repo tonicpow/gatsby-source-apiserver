@@ -23,7 +23,7 @@ const conflictFieldPrefix = `alternative_`
 const restrictedNodeFields = [`id`, `children`, `parent`, `fields`, `internal`]
 
 // Create nodes from entities
-exports.createNodesFromEntities = ({entities, entityType, schemaType, enableDevRefresh, refreshId, createNode, createNodeId, reporter}) => {
+exports.createNodesFromEntities = ({entities, entityType, schemaType, devRefresh, enableRefreshEndpoint, refreshId, createNode, createNodeId, reporter}) => {
 
   // Standardize and clean keys
   entities = standardizeKeys(entities)
@@ -38,6 +38,11 @@ exports.createNodesFromEntities = ({entities, entityType, schemaType, enableDevR
   }
   entities.push(dummyEntity)
 
+  // warn if setting `enableDevRefresh` but not `ENABLE_GATSBY_REFRESH_ENDPOINT`
+  if (devRefresh && !enableRefreshEndpoint) {
+    log(chalk`{bgCyan.black Plugin ApiServer} {yellow warning} enableDevRefresh only works with ENABLE_GATSBY_REFRESH_ENDPOINT enabled.\n{bgCyan.black Plugin ApiServer} see https://www.gatsbyjs.org/docs/environment-variables/#reserved-environment-variables`)
+  }
+
   entities.forEach(e => {
     const { __type, ...entity } = e
 
@@ -49,7 +54,10 @@ exports.createNodesFromEntities = ({entities, entityType, schemaType, enableDevR
     // }
 
     let id = entity.id === 'dummy' ? 'dummy' : createGatsbyId(createNodeId);
-    if (process.env.NODE_ENV === 'development' && enableDevRefresh) {
+
+    // override ID for dev refresh
+    // see https://github.com/gatsbyjs/gatsby/issues/14653
+    if (devRefresh && enableRefreshEndpoint) {
       if (restrictedNodeFields.includes(refreshId)) {
         refreshId = `${conflictFieldPrefix}${refreshId}`
       }
