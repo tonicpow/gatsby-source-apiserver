@@ -52,7 +52,7 @@ async function fetch({
       }
 
       if(verbose) {
-        log(chalk`{bgCyan Plugin ApiServer} ${name}.json was saved locally to ${path}`)
+        log(chalk`{bgCyan.black Plugin ApiServer} ${name}.json was saved locally to ${path}`)
       }
     }
 

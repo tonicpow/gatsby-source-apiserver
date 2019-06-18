@@ -129,7 +129,7 @@ function getValidKey({ key, verbose = false }) {
     nkey = `${conflictFieldPrefix}${nkey}`.replace(/-|__|:|\$|\.|\s/g, '_');
   }
   if (changed && verbose)
-    log(chalk`{bgCyan Plugin ApiServer} Object with key "${key}" breaks GraphQL naming convention. Renamed to "${nkey}"`)
+    log(chalk`{bgCyan.black Plugin ApiServer} Object with key "${key}" breaks GraphQL naming convention. Renamed to "${nkey}"`)
 
   return nkey
 }
