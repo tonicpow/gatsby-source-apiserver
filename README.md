@@ -26,6 +26,8 @@ npm install --save gatsby-source-apiserver@next
 
 ## Change logs
 
+- `2.1.3`:
+  - Add ability to refresh node in development by `ENABLE_GATSBY_REFRESH_ENDPOINT` env. [See more](https://www.gatsbyjs.org/docs/environment-variables/#reserved-environment-variables)
 - `2.1.2`:
   - Upgrade axios to 0.19.0 to fix DoS vulnerability
   - Fix BoundActionCreators depracation warning
