@@ -29,10 +29,12 @@ exports.sourceNodes = async ({
   schemaType,
   entitiesArray = [{}],
   params = {},
-  verboseOutput = false
+  verboseOutput = false,
+  enableDevRefresh = false,
+  refreshId = 'id'
 }) => {
   //store the attributes in an object to avoid naming conflicts
-  const attributes = {typePrefix, url, method, headers, data, localSave, skipCreateNode, path, auth, params, payloadKey, name, entityLevel, schemaType}
+  const attributes = {typePrefix, url, method, headers, data, localSave, skipCreateNode, path, auth, params, payloadKey, name, entityLevel, schemaType, enableDevRefresh, refreshId}
   const { createNode } = actions;
 
   // If true, output some info as the plugin runs
@@ -72,11 +74,17 @@ exports.sourceNodes = async ({
     const name = entity.name ? entity.name : attributes.name
     const entityLevel = entity.entityLevel ? entity.entityLevel : attributes.entityLevel 
     const schemaType = entity.schemaType ? entity.schemaType : attributes.schemaType
+    const enableDevRefresh = entity.enableDevRefresh ? entity.enableDevRefresh : attributes.enableDevRefresh
+    const refreshId = entity.refreshId ? entity.refreshId : attributes.refreshId
 
     if (authorization) headers.Authorization = authorization
     // Create an entity type from prefix and name supplied by user
     let entityType = `${typePrefix}${name}`
     // console.log(`entityType: ${entityType}`);
+
+    // Determine whether to refresh data when running `gatsby develop`
+    const devRefresh = process.env.NODE_ENV === 'development' && enableDevRefresh
+    const enableRefreshEndpoint = process.env.ENABLE_GATSBY_REFRESH_ENDPOINT
 
     // Fetch the data
     let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter})
@@ -104,6 +112,9 @@ exports.sourceNodes = async ({
         entities,
         entityType,
         schemaType,
+        devRefresh,
+        enableRefreshEndpoint,
+        refreshId,
         createNode,
         createNodeId,
         reporter})

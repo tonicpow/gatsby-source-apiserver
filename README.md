@@ -128,6 +128,21 @@ plugins: [
       // Default is false
       skipCreateNode: false, // skip import to graphQL, only use if localSave is all you want
 
+      // Optionally re-source data when it changes and
+      // `gatsby develop` is running.
+      // Requires `ENABLE_GATSBY_REFRESH_ENDPOINT=true`.
+      // See https://www.gatsbyjs.org/docs/environment-variables/#reserved-environment-variables
+      // Default is false
+      enableDevRefresh: true,
+
+      // Optionally override key used to re-source data
+      // when `gatsby develop` is running.
+      // Requires `enableDevRefresh: true`.
+      // See setting directly above this one.
+      // See also https://github.com/gatsbyjs/gatsby/issues/14653
+      // Default is `id`
+      refreshId: `id`,
+
       // Pass an array containing any number of the entity configuration properties (except verbose, auth0Config),
       // any not specified are defaulted to the general properties that are specified
       // Only available from version 2.1.0
