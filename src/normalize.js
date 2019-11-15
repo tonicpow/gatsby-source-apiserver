@@ -71,9 +71,9 @@ exports.createNodesFromEntities = ({entities, entityType, schemaType, devRefresh
       id: id,
       parent: null,
       children: [],
-      mediaType: 'application/json',
       internal: {
         type: __type,
+        mediaType: 'application/json',
         contentDigest: digest(JSON.stringify(entity))
       }
     };
