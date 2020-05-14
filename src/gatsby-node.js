@@ -11,7 +11,8 @@ const forEachAsync = require('./helpers').forEachAsync
 exports.sourceNodes = async ({
   actions,
   createNodeId,
-  reporter
+  reporter,
+  getCache
 }, {
   typePrefix = '',
   url,
@@ -31,7 +32,9 @@ exports.sourceNodes = async ({
   params = {},
   verboseOutput = false,
   enableDevRefresh = false,
-  refreshId = 'id'
+  refreshId = 'id',
+  allowCache = false,
+  maxCacheDurationSeconds = 60 * 60 * 24
 }) => {
   //store the attributes in an object to avoid naming conflicts
   const attributes = {typePrefix, url, method, headers, data, localSave, skipCreateNode, path, auth, params, payloadKey, name, entityLevel, schemaType, enableDevRefresh, refreshId}
@@ -54,6 +57,22 @@ exports.sourceNodes = async ({
       console.error('\nEncountered authentication error: ' + error);
     }
     console.timeEnd('\nAuthenticate user');
+  }
+
+  const cache = getCache('gatsby-source-apiserver')
+
+  let useCache = allowCache
+  if (allowCache) {
+    const cacheTimestamp = await cache.get('cacheTimestamp')
+    if (cacheTimestamp) {
+      const cacheDate = new Date(cacheTimestamp)
+      const cacheMillis = cacheDate.getTime()
+      const ageInMillis = Date.now() - cacheMillis
+      useCache = ageInMillis < (maxCacheDurationSeconds * 1000)
+      if (!useCache) {
+        reporter.info(`not using cache as its too old ${ageInMillis / 1000}s`)
+      }
+    }
   }
 
   await forEachAsync(entitiesArray, async (entity) => {
@@ -86,8 +105,9 @@ exports.sourceNodes = async ({
     const devRefresh = process.env.NODE_ENV === 'development' && enableDevRefresh
     const enableRefreshEndpoint = process.env.ENABLE_GATSBY_REFRESH_ENDPOINT
 
+
     // Fetch the data
-    let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter})
+    let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter, cache, useCache, shouldCache: allowCache, maxCacheDurationSeconds})
 
     // Interpolate entities from nested resposne
     if (entityLevel) {
