@@ -90,6 +90,11 @@ plugins: [
         username: "myusername",
         password: "supersecretpassword1234"
       },
+      // enable disk caching
+      allowCache: false,
+      // if allowCache is true, then the cache will be purged after the
+      // specified amount of time
+      maxCacheDurationSeconds: 60 * 60 * 24,
 
       // Advanced authentication for Auth0
       // Only available from version 2.1.0
