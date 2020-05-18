@@ -26,6 +26,15 @@ npm install --save gatsby-source-apiserver@next
 
 ## Change logs
 
+- `2.1.5`:
+  - Allow caching for slow API servers. See example configuration
+  ```
+  // enable disk caching
+  allowCache: false,
+  // if allowCache is true, then the cache will be purged after the
+  // specified amount of time
+  maxCacheDurationSeconds: 60 * 60 * 24,
+  ```
 - `2.1.3`:
   - Add ability to refresh node in development by `ENABLE_GATSBY_REFRESH_ENDPOINT` env. [See more](https://www.gatsbyjs.org/docs/environment-variables/#reserved-environment-variables)
 - `2.1.2`:
