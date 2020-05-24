@@ -169,7 +169,18 @@ plugins: [
           headers: {
             "Content-Type": "application/json"
           },
-          name: `posts`
+          name: `posts`,
+          // optional paging
+          calculateNextPage: (curUrl, response, context) => {
+            let page = 2
+            if (context.page) {
+              page = context.page + 1
+            }
+            context.page = page
+            const url = `http://yourapi.com/api/v1/posts?page=${page}`
+            const hasNext = response.data.length >= 100
+            return { url, hasNext }
+          }   
         }
       ]
     }
