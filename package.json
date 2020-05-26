@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-apiserver",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Gatsby plugin to handle any third party api data intake.",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,8 @@
     "chalk": "^2.3.2",
     "deep-map-keys": "^1.2.0",
     "json-stringify-safe": "^5.0.1",
+    "kind-of": "6.0.3",
+    "minimist": "1.2.3",
     "nanoid": "^1.0.2"
   }
 }

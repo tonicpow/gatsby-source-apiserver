@@ -26,6 +26,8 @@ npm install --save gatsby-source-apiserver@next
 
 ## Change logs
 
+- `2.1.6`:
+  - Support pagination for recurring fetch big amount of data from server. See `calculateNextPage` in example configuration
 - `2.1.5`:
   - Allow caching for slow API servers. See example configuration
   ```
