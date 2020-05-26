@@ -5,6 +5,51 @@ const httpExceptionHandler = require(`./http-exception-handler`)
 const chalk = require('chalk')
 const log = console.log
 
+async function doFetch(method, url, headers, data, params, auth, reporter, routeData, calculateNextPage) {
+  let completeResult = []
+  let haveMorePages = false
+  let curUrl = url
+  let context = {}
+  let didPage = false
+
+  do {
+    let options = {
+      method: method,
+      url: curUrl,
+      headers: headers,
+      data: data,
+      params: params
+    };
+    if (auth) {
+      options.auth = auth
+    }
+    reporter.verbose(`loading from server ${curUrl}`)
+    const response = await axios(options)
+    reporter.verbose(`got url ${curUrl}`)
+    routeData = response.data
+
+    haveMorePages = false // needs to be set to true below
+    if (routeData) {
+      completeResult.push(...routeData)
+      if (calculateNextPage) {
+        try {
+          const nextPage = calculateNextPage(curUrl, response, context);
+          if (nextPage.hasNext) {
+            didPage = true
+            haveMorePages = nextPage.hasNext;
+            curUrl = nextPage.url
+            reporter.verbose(`have more data, next page ${curUrl}`)
+          }
+        } catch (e) {
+          reporter.error(`error during calculateNextPage for url ${curUrl}`, e)
+        }
+      }
+    }
+  } while (haveMorePages)
+
+  return didPage ? completeResult : routeData;
+}
+
 async function fetch({
   url,
   method,
@@ -21,7 +66,8 @@ async function fetch({
   cache,
   useCache,
   shouldCache,
-  maxCacheDurationSeconds
+  maxCacheDurationSeconds,
+  calculateNextPage
 }) {
 
   let allRoutes
@@ -29,21 +75,14 @@ async function fetch({
 
   // Attempt to download the data from api
   routeData = useCache && await cache.get(url)
+
+  if (payloadKey && calculateNextPage) {
+    reporter.panic('payloadKey and calculateNextPage currently dont work together yet', new Error('payloadKey and calculateNextPage currently dont work together yet'))
+  }
   if (!routeData) {
+
     try {
-      let options = {
-        method: method,
-        url: url,
-        headers: headers,
-        data: data,
-        params: params
-      }
-      if(auth) {
-        options.auth = auth
-      }
-      allRoutes = await axios(options)
-      reporter.verbose(`got url ${url}`)
-      routeData = allRoutes.data
+      routeData = await doFetch(method, url, headers, data, params, auth, reporter, routeData, calculateNextPage);
       if (shouldCache) {
         await cache.set(url, routeData)
         await cache.set('cacheTimestamp', new Date().toISOString())

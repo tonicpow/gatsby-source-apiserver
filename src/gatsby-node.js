@@ -86,6 +86,7 @@ exports.sourceNodes = async ({
     const data = entity.data ? entity.data : attributes.data
     const localSave = entity.localSave ? entity.localSave : attributes.localSave
     const skipCreateNode = entity.skipCreateNode ? entity.skipCreateNode : attributes.skipCreateNode
+    const calculateNextPage = entity.calculateNextPage ? entity.calculateNextPage : attributes.calculateNextPage
     const path = entity.path ? entity.path : attributes.path
     const auth = entity.auth ? entity.auth : attributes.auth
     const params = entity.params ? entity.params : attributes.params
@@ -107,9 +108,9 @@ exports.sourceNodes = async ({
 
 
     // Fetch the data
-    let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter, cache, useCache, shouldCache: allowCache, maxCacheDurationSeconds})
+    let entities = await fetch({url, method, headers, data, name, localSave, path, payloadKey, auth, params, verbose, reporter, cache, useCache, shouldCache: allowCache, maxCacheDurationSeconds, calculateNextPage})
 
-    // Interpolate entities from nested resposne
+    // Interpolate entities from nested response
     if (entityLevel) {
       entities = objectRef(entities, entityLevel)
     }
