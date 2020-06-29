@@ -30,7 +30,7 @@ async function doFetch(method, url, headers, data, params, auth, reporter, route
 
     haveMorePages = false // needs to be set to true below
     if (routeData) {
-      completeResult.push(...routeData)
+      completeResult.push(routeData)
       if (calculateNextPage) {
         try {
           const nextPage = calculateNextPage(curUrl, response, context);
