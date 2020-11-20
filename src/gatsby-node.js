@@ -112,7 +112,14 @@ exports.sourceNodes = async ({
 
     // Interpolate entities from nested response
     if (entityLevel) {
-      entities = objectRef(entities, entityLevel)
+      if (Array.isArray(entities)) {
+        entities = entities.reduce(
+          (acc, cur) => [...acc, ...objectRef(cur, entityLevel)],
+          []
+        )
+      } else {
+        entities = objectRef(entities, entityLevel)
+      }
     }
 
     // If entities is a single object, add to array to prevent issues with creating nodes
