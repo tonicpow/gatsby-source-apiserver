@@ -31,12 +31,12 @@ exports.createNodesFromEntities = ({entities, entityType, schemaType, devRefresh
   // Add entity type to each entity
   entities = createEntityType(entityType, entities)
 
-  const dummyEntity = {
-    id: 'dummy',
-    __type: entityType,
-    ...schemaType
-  }
-  entities.push(dummyEntity)
+//   const dummyEntity = {
+//     id: 'dummy',
+//     __type: entityType,
+//     ...schemaType
+//   }
+//   entities.push(dummyEntity)
 
   // warn if setting `enableDevRefresh` but not `ENABLE_GATSBY_REFRESH_ENDPOINT`
   if (devRefresh && !enableRefreshEndpoint) {
